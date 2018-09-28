@@ -1,6 +1,9 @@
 import React, { Component } from 'react';
 import { BrowserRouter as Router, Route } from 'react-router-dom'
 import { Provider } from 'react-redux';
+import jwt_decode from 'jwt-decode';
+import setAuthToken from '../src/tools/setAuthToken';
+import { setCurrentUser } from './ducks/actions/authActions';
 import store from '../src/ducks/store';
 import Navbar from './components/Navbar'
 import Landing from './components/Landing';
@@ -9,6 +12,15 @@ import Register from './components/Register';
 import Footer from './components/Footer';
 import './style.css'
 
+// check for token
+if(localStorage.jwtToken) {
+  // Set auth token
+  setAuthToken(localStorage.jwtToken);
+  // Decode and get user info
+  const decoded = jwt_decode(localStorage.jwtToken);
+  // Now set user
+  store.dispatch(setCurrentUser(decoded));
+}
 
 
 class App extends Component {

@@ -1,5 +1,8 @@
 import React, { Component } from 'react'
-import axios from 'axios';
+import PropTypes from 'prop-types';
+import { connect } from 'react-redux';
+import { withRouter } from 'react-router-dom';
+import { registerUser } from '../ducks/actions/authActions';
 import classnames from 'classnames';
 
 class Register extends Component {
@@ -14,6 +17,12 @@ class Register extends Component {
     }
   }
 
+  componentWillReceiveProps(nextProps) {
+    if(nextProps.errors) {
+      this.setState({errors: nextProps.errors})
+    }
+  }
+
   handleInputs = (e) => {
     this.setState({[e.target.name]: e.target.value})
   }
@@ -25,9 +34,8 @@ class Register extends Component {
       password: this.state.password,
       password2: this.state.password2,
     }
-    axios.post('/api/users/register', newUser).then(res => {
-      console.log(res.data)
-    }).catch(err => this.setState({errors: err.response.data}));
+    this.props.registerUser(newUser, this.props.history)
+
   }
   render() {
     console.log(this.state)
@@ -93,8 +101,21 @@ class Register extends Component {
     )
   }
 }
+Register.propTypes = {
+  registerUser: PropTypes.func.isRequired,
+  auth: PropTypes.object.isRequired,
+  errors: PropTypes.object.isRequired,
+}
+
+const mapStateToProps = (state) => ({
+  auth: state.auth,
+  errors: state.errors
+
+})
+  
 
 
 
 
-export default Register
+
+export default connect(mapStateToProps, { registerUser })(withRouter(Register))
