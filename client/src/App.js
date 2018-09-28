@@ -3,7 +3,7 @@ import { BrowserRouter as Router, Route } from 'react-router-dom'
 import { Provider } from 'react-redux';
 import jwt_decode from 'jwt-decode';
 import setAuthToken from '../src/tools/setAuthToken';
-import { setCurrentUser } from './ducks/actions/authActions';
+import { setCurrentUser, logoutUser } from './ducks/actions/authActions';
 import store from '../src/ducks/store';
 import Navbar from './components/Navbar'
 import Landing from './components/Landing';
@@ -20,6 +20,15 @@ if(localStorage.jwtToken) {
   const decoded = jwt_decode(localStorage.jwtToken);
   // Now set user
   store.dispatch(setCurrentUser(decoded));
+
+  // check for expired token
+  const currentTime = Date.now() / 1000;
+  if(decoded.exp < currentTime) {
+    store.dispatch(logoutUser());
+
+    // redirect
+    window.location.href="/login";
+  }
 }
 
 
