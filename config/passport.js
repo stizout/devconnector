@@ -12,7 +12,9 @@ opts.secretOrKey = keys.payloadKey
 module.exports = (passport) => {
   passport.use(new JwtStrategy(opts, (jwt_payload, done) => {
     User.findById(jwt_payload.id).then((user) => {
+      console.log('this time i was hit')
       if(user) {
+        console.log('I was just hit')
         return done(null, user);
       }
       return done(null, false);
